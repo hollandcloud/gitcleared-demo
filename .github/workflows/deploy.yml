@@ -1,0 +1,32 @@
+name: Deploy
+
+# Started by hand, so a run can be put in front of a reviewer whenever one is
+# needed. The production environment requires approval, so every run stops
+# there and waits — which is the state GitCleared exists to clear.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Plan only; change nothing.
+        type: boolean
+        default: false
+      note:
+        description: Shown in the run's log.
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+      - name: Deploy
+        run: |
+          echo "Deploying ${GITHUB_SHA::7} to production (dry run: ${{ inputs.dry_run }})"
+          echo "Note: ${{ inputs.note }}"
+          echo "Nothing is really deployed — this is a demo."
